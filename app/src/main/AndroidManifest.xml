@@ -7,7 +7,7 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:name=".modules.base.BaseApplication"
+        android:name=".base.BaseApplication"
         android:theme="@style/AppTheme">
         <activity android:name=".modules.main.ui.MainActivity">
             <intent-filter>

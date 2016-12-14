@@ -1,18 +1,36 @@
 package cn.edu.nini.bububu.modules.main.ui;
 
+import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
+import android.support.design.widget.TabLayout;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.edu.nini.bububu.R;
-import cn.edu.nini.bububu.modules.common.utils.SharedPreferenceUtil;
+import cn.edu.nini.bububu.base.BaseActivity;
+import cn.edu.nini.bububu.common.utils.SharedPreferenceUtil;
+import cn.edu.nini.bububu.common.utils.SnackbarUtil;
+import cn.edu.nini.bububu.common.utils.ToastUtil;
+import cn.edu.nini.bububu.modules.city.ChoiceCityActivity;
 import cn.edu.nini.bububu.modules.main.adapter.MyViewPageAdapter;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
     @BindView(R.id.viewpage)
     ViewPager mViewPager;
+    @BindView(R.id.fab)
+    FloatingActionButton mFab;
+    @BindView(R.id.coordinatorlayout)
+    CoordinatorLayout mCoordinatorLayout;
+    @BindView(R.id.tabLayout)
+    TabLayout mTabLayout;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,14 +43,71 @@ public class MainActivity extends AppCompatActivity {
 
     private void initView() {
         MyViewPageAdapter adapter = new MyViewPageAdapter(getSupportFragmentManager());
-        adapter.addFragment(FirstFragment.newInstance(1));
-        adapter.addFragment(FirstFragment.newInstance(2));
+        adapter.addFragment(FirstFragment.newInstance(1), "主页面");
+        adapter.addFragment(FirstFragment.newInstance(2), "多城市");
         mViewPager.setAdapter(adapter);
+        mTabLayout.setupWithViewPager(mViewPager);
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+                                               @Override
+                                               public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+                                               }
+
+                                               @Override
+                                               public void onPageSelected(int position) {
+                                                   if (position == 1) {
+                                                       mFab.setImageResource(R.drawable.ic_add_24dp);
+                                                       mFab.setBackgroundTintList(
+                                                               ColorStateList.valueOf(ContextCompat.getColor(MainActivity.this, R.color.colorPrimary))
+                                                       );//设置背景色调
+                                                       mFab.setOnClickListener(new View.OnClickListener() {
+                                                           @Override
+                                                           public void onClick(View v) {
+                                                               Intent intent = new Intent(MainActivity.this, ChoiceCityActivity.class);
+
+
+                                                           }
+                                                       });
+                                                   } else {
+
+                                                   }
+                                               }
+
+                                               @Override
+                                               public void onPageScrollStateChanged(int state) {
+
+                                               }
+                                           }
+
+        );
+        /*以下是测试*/
+
+        mFab.setOnClickListener(new View.OnClickListener()
+
+                                {
+                                    @Override
+                                    public void onClick(View v) {
+                                        Snackbar snackBar = SnackbarUtil.ShortSnackbar(mCoordinatorLayout, "这是SnackBar", SnackbarUtil.Info);
+                                        snackBar.setAction("动作", (vi) -> ToastUtil.showShort("你好O(∩_∩)O~"))
+                                                .setCallback(new Snackbar.Callback() {
+                                                    @Override
+                                                    public void onDismissed(Snackbar snackbar, int event) {
+                                                        super.onDismissed(snackbar, event);
+                                                        ToastUtil.showShort("我消失了~");
+                                                    }
+                                                }).show();
+                                    }
+                                }
+
+        );
+
+
     }
 
     /**
      * 初始化Icon
      */
+
     private void initIcon() {
         if (SharedPreferenceUtil.getInstance().getIconType() == 0) {
             SharedPreferenceUtil.getInstance().putInt("未知", R.mipmap.none);

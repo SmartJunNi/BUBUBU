@@ -1,10 +1,10 @@
-package cn.edu.nini.bububu.modules.common.utils;
+package cn.edu.nini.bububu.common.utils;
 
 import android.app.Notification;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import cn.edu.nini.bububu.modules.base.BaseApplication;
+import cn.edu.nini.bububu.base.BaseApplication;
 
 
 /**

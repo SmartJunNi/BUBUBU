@@ -6,7 +6,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import cn.edu.nini.bububu.modules.base.BaseFragment;
+import cn.edu.nini.bububu.base.BaseFragment;
+
 
 /**
  * Created by nini on 2016/12/13.

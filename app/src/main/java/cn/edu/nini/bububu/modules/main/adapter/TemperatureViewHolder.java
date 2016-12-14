@@ -7,7 +7,7 @@ import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.edu.nini.bububu.R;
-import cn.edu.nini.bububu.modules.common.utils.SharedPreferenceUtil;
+import cn.edu.nini.bububu.common.utils.SharedPreferenceUtil;
 import cn.edu.nini.bububu.modules.main.domain.Weather;
 
 /**
