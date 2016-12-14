@@ -1,0 +1,73 @@
+apply plugin: 'com.android.application'
+/*lambda*/
+apply plugin: 'me.tatarka.retrolambda'
+/*freeline*/
+apply plugin: 'com.antfortune.freeline'
+apply plugin: 'com.jakewharton.butterknife'
+android {
+    compileSdkVersion 24
+    buildToolsVersion "24.0.3"
+    defaultConfig {
+        applicationId "cn.edu.nini.bububu"
+        minSdkVersion 17
+        targetSdkVersion 24
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    freeline {
+        hack true
+        //如果配置了多Flavor，可以在这里指定编译的Flavor
+        productFlavor "develop"
+    }
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    compile 'com.android.support:appcompat-v7:24.2.1'
+    testCompile 'junit:junit:4.12'
+    compile 'com.android.support:recyclerview-v7:24.2.1'
+    compile 'com.android.support:cardview-v7:24.2.1'
+    /*gson*/
+    compile 'com.google.code.gson:gson:2.6.2'
+    /*butterknife*/
+    compile 'com.jakewharton:butterknife:8.4.0'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
+    /*Plog*/
+    compile 'org.mym.plog:android-plog:1.3.0'
+    /*RxJAVA  and  RxAndroid  https://github.com/ReactiveX/RxJava*/
+    compile 'io.reactivex:rxjava:1.0.14'
+    compile 'io.reactivex:rxandroid:1.0.1'
+    /*Base Adapter   https://github.com/nijun0718/baseAdapter*/
+    compile 'com.zhy:base-rvadapter:3.0.3'
+    /*gson*/
+    compile 'com.google.code.gson:gson:2.6.2'
+    /*cardview*/
+    compile 'com.android.support:cardview-v7:24.2.1'
+    /*glide*/
+    compile 'com.github.bumptech.glide:glide:3.7.0'
+    compile 'com.github.bumptech.glide:okhttp3-integration:1.4.0@aar'
+    /*ksoap2*/
+    compile files('libs/ksoap2-android-assembly-3.6.1-jar-with-dependencies.jar')
+    /*retrofit2*/
+    compile 'com.squareup.retrofit2:retrofit:2.0.0-beta4'
+    //Retrofit2所需要的包
+    compile 'com.squareup.retrofit2:converter-gson:2.0.0-beta4'
+    //ConverterFactory的Gson依赖包
+    compile 'com.squareup.retrofit2:converter-scalars:2.0.0-beta4'
+    //ConverterFactory的String依赖包
+    //*permissiongen*/
+    compile 'com.lovedise:permissiongen:0.0.6'
+    compile 'com.android.support:design:24.2.1'
+    compile 'com.android.support:support-v4:24.2.1'
+}
