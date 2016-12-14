@@ -6,5 +6,5 @@ package cn.edu.nini.bububu.modules.base;
 
 public class C {
     public static final String target = "https://api.heweather.com/x3/weather?" +
-            "cityid=CN101010100&key=af71e684a8f540feaaad7c92566324c1";
+            "cityid=CN101010100&key=5f6b4bebfc98499db06709192bcd7283";
 }

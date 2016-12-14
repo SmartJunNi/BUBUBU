@@ -49,7 +49,7 @@ public class FirstFragment extends BaseFragment {
     private LayoutInflater mLayoutInflater;
     private int TYPE = TYPE_NOW_CARD;
     @BindView(R.id.recycler_view)
-     RecyclerView mRv;
+    RecyclerView mRv;
     @BindView(R.id.swipelayout)
     SwipeRefreshLayout mSwipeRefreshLayout;
     private View mView;
@@ -73,9 +73,7 @@ public class FirstFragment extends BaseFragment {
             Bundle arguments = getArguments();
             TYPE = arguments.getInt("type");
         }
-        //load();
-       // initData();//// TODO: 2016/12/14  加了这句   它把mweather放在了onnetx里
-
+        initData();
     }
 
     @Nullable
@@ -83,18 +81,14 @@ public class FirstFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         if (mView == null) {
             mView = inflater.inflate(R.layout.fragment_first, container, false);
-            ButterKnife.bind(this,mView);
+            ButterKnife.bind(this, mView);
         }
-
         return mView;
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        //        initView();
-        //  new MyAsyncTask().execute();
-
 
         /*Observable<String> observable = Observable.create(new Observable.OnSubscribe<String>() {
             @Override
@@ -127,16 +121,18 @@ public class FirstFragment extends BaseFragment {
         };
 
         observable.subscribe(onNextAction,onErrorAction,onCompletedAction);*/
+
         load();
     }
 
     private void load() {
+        mSwipeRefreshLayout.setRefreshing(true);
         Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
                 //在这里执行耗时操作
-                String s = initData();
-                subscriber.onNext(s);
+                initData();
+                subscriber.onNext("");
                 subscriber.onCompleted();
             }
         })
@@ -159,10 +155,8 @@ public class FirstFragment extends BaseFragment {
                     @Override
                     public void onNext(String s) {
                         //到这里mWeather已经是获取到了
-                        //doParse(s);
-
+                        Log.d("FirstFragment", s);
                         safeSetTitle(mWeather.getBasic().getCity());
-//                        mAdapter.notifyDataSetChanged();
                     }
                 });
     }
@@ -172,35 +166,21 @@ public class FirstFragment extends BaseFragment {
                 android.R.color.holo_green_light,
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
-        /*mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                mSwipeRefreshLayout.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        mSwipeRefreshLayout.setRefreshing(true);
-                        load();
-
-                    }
-                },1000);
-            }
-        });*/
-
-
+        mSwipeRefreshLayout.setOnRefreshListener(
+               () -> mSwipeRefreshLayout.postDelayed(this::load, 1000));
 
         mRv.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
         mAdapter = new WeatherAdapter(mWeather);
         mRv.setAdapter(mAdapter);
     }
 
-    private String initData() {
+    private void initData() {
         PermissionGen.with(this).addRequestCode(REQUEST_PERMISSION)
                 .permissions(Manifest.permission.INTERNET).request();
-
-        return FetchWeather();
+         FetchWeather();
     }
 
-    private String FetchWeather() {
+    private void FetchWeather() {
         try {
             URL url = new URL(C.target);
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
@@ -214,23 +194,20 @@ public class FirstFragment extends BaseFragment {
             br.close();
             is.close();
 
-            doParse(mWeatherJson.toString());
-            return mWeatherJson.toString();
+            //处理json数据。
+            String weatherJson =  mWeatherJson.toString().toString().trim().
+                    subSequence(31,  mWeatherJson.toString().toString().trim().length() - 2).toString();
+
+            Gson gson = new Gson();
+            Weather weather = gson.fromJson(weatherJson, Weather.class);
+            mWeather = weather;
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return null;
+
     }
 
-    private void doParse(String json) {
-        //处理json数据。
-        String weatherJson = json.toString().trim().
-                subSequence(31, json.toString().trim().length() - 2).toString();
 
-        Gson gson = new Gson();
-        Weather weather = gson.fromJson(weatherJson, Weather.class);
-        mWeather = weather;
-    }
 
     @Override
     public void lazyLoad() {

@@ -27,6 +27,10 @@ android {
         //如果配置了多Flavor，可以在这里指定编译的Flavor
         productFlavor "develop"
     }
+    compileOptions {
+        targetCompatibility 1.8
+        sourceCompatibility 1.8
+    }
 }
 
 dependencies {

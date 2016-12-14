@@ -47,7 +47,8 @@ public class WeatherAdapter extends RecyclerView.Adapter<CommonViewHolder> {
         switch (viewType) {
             case TYPE_ONE:
                 return new TemperatureViewHolder(
-                        LayoutInflater.from(parent.getContext()).inflate(R.layout.item_temperature, parent, false));//TODO难问题出在这里草。
+                        LayoutInflater.from(parent.getContext())
+                                .inflate(R.layout.item_temperature, parent, false));//TODO难问题出在这里草。
             case TYPE_TWO:
                 return new HourViewHolder(
                         LayoutInflater.from(parent.getContext()).inflate(R.layout.item_hour_info, parent, false),
