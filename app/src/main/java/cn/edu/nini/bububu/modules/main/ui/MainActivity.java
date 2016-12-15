@@ -3,25 +3,32 @@ package cn.edu.nini.bububu.modules.main.ui;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.edu.nini.bububu.R;
 import cn.edu.nini.bububu.base.BaseActivity;
+import cn.edu.nini.bububu.common.utils.CircularAnimUtil;
 import cn.edu.nini.bububu.common.utils.SharedPreferenceUtil;
 import cn.edu.nini.bububu.common.utils.SnackbarUtil;
 import cn.edu.nini.bububu.common.utils.ToastUtil;
 import cn.edu.nini.bububu.modules.city.ChoiceCityActivity;
 import cn.edu.nini.bububu.modules.main.adapter.MyViewPageAdapter;
 
-public class MainActivity extends BaseActivity {
+public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener{
     @BindView(R.id.viewpage)
     ViewPager mViewPager;
     @BindView(R.id.fab)
@@ -30,6 +37,12 @@ public class MainActivity extends BaseActivity {
     CoordinatorLayout mCoordinatorLayout;
     @BindView(R.id.tabLayout)
     TabLayout mTabLayout;
+    @BindView(R.id.toolbar)
+    Toolbar mToolbar;
+    @BindView(R.id.nav_view)
+    NavigationView mNavView;
+    @BindView(R.id.drawlayout)
+    DrawerLayout mDrawerLayout;
 
 
     @Override
@@ -42,6 +55,7 @@ public class MainActivity extends BaseActivity {
     }
 
     private void initView() {
+        setSupportActionBar(mToolbar);
         MyViewPageAdapter adapter = new MyViewPageAdapter(getSupportFragmentManager());
         adapter.addFragment(FirstFragment.newInstance(1), "主页面");
         adapter.addFragment(FirstFragment.newInstance(2), "多城市");
@@ -64,46 +78,57 @@ public class MainActivity extends BaseActivity {
                                                            @Override
                                                            public void onClick(View v) {
                                                                Intent intent = new Intent(MainActivity.this, ChoiceCityActivity.class);
-
-
+                                                                //// TODO: 2016/12/15 传递参数到 ChoiceCityActivity
+                                                               CircularAnimUtil.startActivity(MainActivity.this,intent,mFab, R.color.colorPrimary);
                                                            }
                                                        });
+                                                       if (!mFab.isShown()) {
+                                                           mFab.show();
+                                                       }
                                                    } else {
+                                                       mFab.setImageResource(R.drawable.ic_favorite);
+                                                       mFab.setBackgroundTintList(
+                                                               ColorStateList.valueOf(ContextCompat.getColor(MainActivity.this, R.color.colorAccent)));
 
+                                                       mFab.setOnClickListener(new View.OnClickListener() {
+                                                           @Override
+                                                           public void onClick(View v) {
+                                                               Snackbar snackBar = SnackbarUtil.ShortSnackbar(mCoordinatorLayout, "Hello~", SnackbarUtil.Info);
+                                                               snackBar.setAction("动作", (vi) -> ToastUtil.showShort("你好O(∩_∩)O~"))
+                                                                       .setCallback(new Snackbar.Callback() {
+                                                                           @Override
+                                                                           public void onDismissed(Snackbar snackbar, int event) {
+                                                                               super.onDismissed(snackbar, event);
+                                                                               ToastUtil.showShort("我消失了~");
+                                                                           }
+                                                                       }).show();
+                                                           }
+                                                       });
                                                    }
                                                }
 
                                                @Override
                                                public void onPageScrollStateChanged(int state) {
-
                                                }
-                                           }
-
-        );
-        /*以下是测试*/
-
-        mFab.setOnClickListener(new View.OnClickListener()
-
-                                {
-                                    @Override
-                                    public void onClick(View v) {
-                                        Snackbar snackBar = SnackbarUtil.ShortSnackbar(mCoordinatorLayout, "这是SnackBar", SnackbarUtil.Info);
-                                        snackBar.setAction("动作", (vi) -> ToastUtil.showShort("你好O(∩_∩)O~"))
-                                                .setCallback(new Snackbar.Callback() {
-                                                    @Override
-                                                    public void onDismissed(Snackbar snackbar, int event) {
-                                                        super.onDismissed(snackbar, event);
-                                                        ToastUtil.showShort("我消失了~");
-                                                    }
-                                                }).show();
-                                    }
-                                }
-
-        );
-
+                                           });
 
     }
-
+    /**
+     * 初始化抽屉
+     */
+    private void initDrawer() {
+        //https://segmentfault.com/a/1190000004151222
+        if (mNavView != null) {
+            mNavView.setNavigationItemSelectedListener(this);
+            //navigationView.setItemIconTintList(null);
+            mNavView.inflateHeaderView(R.layout.nav_header_main);
+            ActionBarDrawerToggle toggle =
+                    new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, R.string.navigation_drawer_open,
+                            R.string.navigation_drawer_close);
+            mDrawerLayout.addDrawerListener(toggle);
+            toggle.syncState();
+        }
+    }
     /**
      * 初始化Icon
      */
@@ -141,4 +166,8 @@ public class MainActivity extends BaseActivity {
         }
     }
 
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        return false;
+    }
 }
