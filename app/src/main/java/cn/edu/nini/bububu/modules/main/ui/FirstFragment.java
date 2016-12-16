@@ -1,7 +1,6 @@
 package cn.edu.nini.bububu.modules.main.ui;
 
 import android.Manifest;
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -28,22 +27,27 @@ import java.net.URL;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.edu.nini.bububu.R;
+import cn.edu.nini.bububu.WeatherService;
 import cn.edu.nini.bububu.base.BaseFragment;
 import cn.edu.nini.bububu.base.C;
 import cn.edu.nini.bububu.common.utils.ToastUtil;
 import cn.edu.nini.bububu.modules.main.adapter.WeatherAdapter;
 import cn.edu.nini.bububu.modules.main.domain.Weather;
+import cn.edu.nini.bububu.modules.main.domain.WeatherAPI;
 import kr.co.namee.permissiongen.PermissionGen;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
+import retrofit2.converter.gson.GsonConverterFactory;
 import rx.Observable;
 import rx.Observer;
-import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
+import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 /**
@@ -55,15 +59,13 @@ public class FirstFragment extends BaseFragment {
     public static final int TYPE_MORE_INFO = 3;
     public static final int REQUEST_PERMISSION = 100;
     public static final int COMPLETE_FETCH = 10;
-    private Context mContext;
-    private LayoutInflater mLayoutInflater;
     private int TYPE = TYPE_NOW_CARD;
     @BindView(R.id.recycler_view)
     RecyclerView mRv;
     @BindView(R.id.swipelayout)
     SwipeRefreshLayout mSwipeRefreshLayout;
     private View mView;
-    private Weather mWeather;
+    private Weather mWeather=new Weather();
     private StringBuilder mWeatherJson;
     private WeatherAdapter mAdapter;
     @BindView(R.id.image)
@@ -102,43 +104,12 @@ public class FirstFragment extends BaseFragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-       // initView();
-        /*Observable<String> observable = Observable.create(new Observable.OnSubscribe<String>() {
-            @Override
-            public void call(Subscriber<? super String> subscriber) {
-                subscriber.onNext(initData());
-                subscriber.onCompleted();
-            }
-        })
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io());
+         initView();
 
-        Action0 onCompletedAction =new Action0() {
-            @Override
-            public void call() {
-                initView();
-            }
-        };
-
-        Action1<String> onNextAction =new Action1<String>() {
-            @Override
-            public void call(String s) {
-                doParse(s);
-            }
-        };
-        Action1<Throwable> onErrorAction=new Action1<Throwable>() {
-            @Override
-            public void call(Throwable o) {
-                Log.d("FirstFragment", "onError");
-            }
-        };
-
-        observable.subscribe(onNextAction,onErrorAction,onCompletedAction);*/
-        load();
-        getWeather();
-        getImage();
+        load(); //// TODO: 2016/12/16 toolbar标题不显示  y因为把toolbar包裹在了CollapsingToolbarLayout里面
+        //getWeather();
+        //getImage();
     }
-
 
 
     private void initView() {
@@ -147,14 +118,14 @@ public class FirstFragment extends BaseFragment {
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
         mSwipeRefreshLayout.setOnRefreshListener(
-               () -> mSwipeRefreshLayout.postDelayed(this::load, 1000));
+                () -> mSwipeRefreshLayout.postDelayed(this::load, 1000));
 
         mRv.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
         mAdapter = new WeatherAdapter(mWeather);
         mRv.setAdapter(mAdapter);
     }
 
-    private void load() {
+    /*private void load() {
         mSwipeRefreshLayout.setRefreshing(true);
         Observable.create(new Observable.OnSubscribe<String>() {
             @Override
@@ -179,6 +150,7 @@ public class FirstFragment extends BaseFragment {
                     @Override
                     public void onError(Throwable e) {
                         Log.d("FirstFragment", "onError");
+                        e.printStackTrace();
                     }
 
                     @Override
@@ -188,19 +160,50 @@ public class FirstFragment extends BaseFragment {
                         safeSetTitle(mWeather.getBasic().getCity());
                     }
                 });
+    }*/
+
+    private void load() {
+        mSwipeRefreshLayout.setRefreshing(true);
+        retrofit()
+                .subscribe(new Observer<Weather>() { //被订阅
+                    @Override
+                    public void onCompleted() {
+                        //处理主线程的逻辑
+                        initView();
+                        mSwipeRefreshLayout.setRefreshing(false);
+                        ToastUtil.showShort(getString(R.string.refresh_complete));
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.d("FirstFragment", "onError");
+                        e.printStackTrace();
+                    }
+
+                    @Override
+                    public void onNext(Weather weather) {
+                        mWeather=weather;
+                        safeSetTitle(mWeather.getBasic().getCity());
+                        mAdapter.notifyDataSetChanged();
+                        Log.d("FirstFragment", weather.toString());
+                    }
+
+    });
     }
 
     private void initData() {
         PermissionGen.with(this).addRequestCode(REQUEST_PERMISSION)
                 .permissions(Manifest.permission.INTERNET).request();
-         FetchWeather();
+        //FetchWeather();
+        //        getWeather();
     }
-//https://ss0.bdstatic.com/5aV1bjqh_Q23odCf/static/superman/img/logo/bd_logo1_31bdc765.png
-    private void getImage(){
+
+    //https://ss0.bdstatic.com/5aV1bjqh_Q23odCf/static/superman/img/logo/bd_logo1_31bdc765.png
+    private void getImage() {
         Request request = new Request.Builder()
                 .url("https://ss0.bdstatic.com/5aV1bjqh_Q23odCf/static/superman/img/logo/bd_logo1_31bdc765.png")
                 .build();
-        OkHttpClient client=new OkHttpClient();
+        OkHttpClient client = new OkHttpClient();
         Call call = client.newCall(request);
         call.enqueue(new Callback() {
             @Override
@@ -227,10 +230,30 @@ public class FirstFragment extends BaseFragment {
         });
     }
 
+    private Observable<Weather> retrofit() {
+        Retrofit retrofit=new Retrofit.Builder()
+                .baseUrl(C.baseUrl)
+                .addConverterFactory( GsonConverterFactory.create())
+                .addCallAdapterFactory( RxJavaCallAdapterFactory.create())
+                .build();
+        WeatherService service = retrofit.create(WeatherService.class);
+        Observable<WeatherAPI> observable = service.mWeather3("CN101010100", "5f6b4bebfc98499db06709192bcd7283");
+        return observable
+                .map(new Func1<WeatherAPI, Weather>() {
+                    @Override
+                    public Weather call(WeatherAPI api) {
+                        return api.mHeWeatherDataService30s.get(0);
+                    }
+                })
+                .compose(tObservable->tObservable.subscribeOn(Schedulers.io())
+                .unsubscribeOn(AndroidSchedulers.mainThread())
+                .observeOn(AndroidSchedulers.mainThread()));
+    }
 
-    private void getWeather(){
+
+    private void getWeather() {
         Request request = new Request.Builder().url(C.target).build();
-        OkHttpClient client=new OkHttpClient();
+        OkHttpClient client = new OkHttpClient();
         Call call = client.newCall(request);
         call.enqueue(new Callback() {
             @Override
@@ -240,7 +263,7 @@ public class FirstFragment extends BaseFragment {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                final  String res = response.body().string();
+                final String res = response.body().string();
                 Observable.just(res)
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribeOn(Schedulers.io())
@@ -248,6 +271,13 @@ public class FirstFragment extends BaseFragment {
                             @Override
                             public void call(String s) {
                                 Log.d("FirstFragment111", s);
+                                //处理json数据。
+                                String weatherJson = s.trim().
+                                        subSequence(31, s.trim().length() - 2).toString();
+                                Log.d("FirstFragment", weatherJson);
+                                Gson gson = new Gson();
+                                Weather weather = gson.fromJson(weatherJson, Weather.class);
+                                mWeather = weather;
                             }
                         });
             }
@@ -269,8 +299,8 @@ public class FirstFragment extends BaseFragment {
             is.close();
 
             //处理json数据。
-            String weatherJson =  mWeatherJson.toString().toString().trim().
-                    subSequence(31,  mWeatherJson.toString().toString().trim().length() - 2).toString();
+            String weatherJson = mWeatherJson.toString().toString().trim().
+                    subSequence(31, mWeatherJson.toString().toString().trim().length() - 2).toString();
 
             Gson gson = new Gson();
             Weather weather = gson.fromJson(weatherJson, Weather.class);
@@ -280,7 +310,6 @@ public class FirstFragment extends BaseFragment {
         }
 
     }
-
 
 
     @Override

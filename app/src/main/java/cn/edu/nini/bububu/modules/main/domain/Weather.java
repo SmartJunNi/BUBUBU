@@ -8,6 +8,19 @@ import java.util.List;
 
 
 public class Weather {
+    @Override
+    public String toString() {
+        return "Weather{" +
+                "aqi=" + aqi +
+                ", basic=" + basic +
+                ", now=" + now +
+                ", status='" + status + '\'' +
+                ", suggestion=" + suggestion +
+                ", daily_forecast=" + daily_forecast +
+                ", hourly_forecast=" + hourly_forecast +
+                '}';
+    }
+
     /**
      * aqi : {"city":{"aqi":"34","co":"1","no2":"36","o3":"38","pm10":"136","pm25":"34","qlty":"优","so2":"8"}}
      * basic : {"city":"北京","cnty":"中国","id":"CN101010100","lat":"39.904000","lon":"116.391000","update":{"loc":"2016-12-13 07:52","utc":"2016-12-12 23:52"}}
