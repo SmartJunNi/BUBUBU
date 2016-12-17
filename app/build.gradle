@@ -54,7 +54,7 @@ dependencies {
     compile 'com.jakewharton:butterknife:8.4.0'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
     /*Plog*/
-    compile 'org.mym.plog:android-plog:1.3.0'
+    compile 'org.mym.plog:android-plog:1.5.0'
     /*RxJAVA  and  RxAndroid  https://github.com/ReactiveX/RxJava*/
     compile 'io.reactivex:rxjava:1.0.14'
     compile 'io.reactivex:rxandroid:1.0.1'
@@ -77,7 +77,6 @@ dependencies {
     compile 'com.lovedise:permissiongen:0.0.6'
     compile 'com.android.support:design:24.2.1'
     compile 'com.android.support:support-v4:24.2.1'
-
     compile 'com.trello:rxlifecycle:0.7.0'
     // If you want to bind to Android-specific lifecycles
     compile 'com.trello:rxlifecycle-android:0.7.0'
@@ -85,4 +84,5 @@ dependencies {
     compile 'com.trello:rxlifecycle-components:0.7.0'
     /*okhttp*/
     compile 'com.squareup.okhttp3:okhttp:3.4.2'
+    compile files('libs/lite-orm-1.9.2.jar')
 }

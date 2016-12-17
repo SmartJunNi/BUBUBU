@@ -7,13 +7,14 @@ import android.widget.TextView;
 
 import butterknife.ButterKnife;
 import cn.edu.nini.bububu.R;
+import cn.edu.nini.bububu.base.BaseViewHolder;
 import cn.edu.nini.bububu.modules.main.domain.Weather;
 
 /**
  * Created by nini on 2016/12/11.
  */
 
-public class HourViewHolder extends CommonViewHolder {
+public class HourViewHolder extends BaseViewHolder<Weather> {
     Context mContext;
     Weather mWeather;
     LinearLayout mLinearLayout;

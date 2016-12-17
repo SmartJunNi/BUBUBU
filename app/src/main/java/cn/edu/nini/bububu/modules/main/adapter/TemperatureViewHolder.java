@@ -7,6 +7,7 @@ import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.edu.nini.bububu.R;
+import cn.edu.nini.bububu.base.BaseViewHolder;
 import cn.edu.nini.bububu.common.utils.SharedPreferenceUtil;
 import cn.edu.nini.bububu.modules.main.domain.Weather;
 
@@ -14,7 +15,7 @@ import cn.edu.nini.bububu.modules.main.domain.Weather;
  * Created by nini on 2016/12/11.
  */
 
-public class TemperatureViewHolder extends CommonViewHolder {
+public class TemperatureViewHolder extends BaseViewHolder<Weather> {
 
     @BindView(R.id.weather_icon)
     ImageView weatherIcon;

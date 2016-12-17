@@ -1,18 +1,18 @@
 package cn.edu.nini.bububu.modules.main.adapter;
 
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import cn.edu.nini.bububu.R;
+import cn.edu.nini.bububu.base.BaseViewHolder;
+import cn.edu.nini.bububu.component.AnimRecyclerViewAdapter;
 import cn.edu.nini.bububu.modules.main.domain.Weather;
 
 /**
  * Created by nini on 2016/12/11.
  */
 
-public class WeatherAdapter extends RecyclerView.Adapter<CommonViewHolder> {
+public class WeatherAdapter extends AnimRecyclerViewAdapter<BaseViewHolder> {
     private static final int TYPE_ONE = 0;
     private static final int TYPE_TWO = 1;
     private static final int TYPE_THREE = 2;
@@ -21,7 +21,6 @@ public class WeatherAdapter extends RecyclerView.Adapter<CommonViewHolder> {
 
     public WeatherAdapter(Weather weather) {
         mWeather = weather;
-        Log.d("WeatherAdapter", "mWeather:" + mWeather);
     }
 
     @Override
@@ -38,12 +37,12 @@ public class WeatherAdapter extends RecyclerView.Adapter<CommonViewHolder> {
         if (position == WeatherAdapter.TYPE_FORE) {
             return WeatherAdapter.TYPE_FORE;
         }
-        return super.getItemViewType(position);
+        return super.getItemViewType(position);//这里会有问题吗
     }
 
     @Override
 
-    public CommonViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public BaseViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         switch (viewType) {
             case TYPE_ONE:
                 return new TemperatureViewHolder(
@@ -63,11 +62,12 @@ public class WeatherAdapter extends RecyclerView.Adapter<CommonViewHolder> {
                         parent.getContext(),
                         mWeather);//TODO难问题出在这里草。
         }
+
         return null;
     }
 
     @Override
-    public void onBindViewHolder(CommonViewHolder holder, int position) {
+    public void onBindViewHolder(BaseViewHolder holder, int position) {
         int itemType = getItemViewType(position);
         switch (itemType) {
             case TYPE_ONE:
@@ -83,6 +83,7 @@ public class WeatherAdapter extends RecyclerView.Adapter<CommonViewHolder> {
                 ((ForecastViewHolder) holder).bind(mWeather);
                 break;
         }
+        showItemAnim(holder.itemView, position);
     }
 
 

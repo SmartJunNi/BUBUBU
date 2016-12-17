@@ -14,7 +14,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -22,6 +21,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.edu.nini.bububu.R;
 import cn.edu.nini.bububu.base.BaseActivity;
+import cn.edu.nini.bububu.base.C;
 import cn.edu.nini.bububu.common.utils.CircularAnimUtil;
 import cn.edu.nini.bububu.common.utils.SharedPreferenceUtil;
 import cn.edu.nini.bububu.common.utils.SnackbarUtil;
@@ -56,7 +56,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     }
 
     private void initView() {
-        Log.d("MainActivity", "mToolbar:" + mToolbar);
         setSupportActionBar(mToolbar);
         MyViewPageAdapter adapter = new MyViewPageAdapter(getSupportFragmentManager());
         adapter.addFragment(FirstFragment.newInstance(1), "主页面");
@@ -80,6 +79,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                                                            @Override
                                                            public void onClick(View v) {
                                                                Intent intent = new Intent(MainActivity.this, ChoiceCityActivity.class);
+                                                               intent.putExtra(C.MULTI_CHECK,true);
                                                                 //// TODO: 2016/12/15 传递参数到 ChoiceCityActivity
                                                                CircularAnimUtil.startActivity(MainActivity.this,intent,mFab, R.color.colorPrimary);
                                                            }

@@ -1,19 +1,39 @@
 package cn.edu.nini.bububu.modules.main.ui;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
+import org.mym.plog.PLog;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.edu.nini.bububu.R;
 import cn.edu.nini.bububu.base.BaseFragment;
+import cn.edu.nini.bububu.base.SimpleSubscribe;
+import cn.edu.nini.bububu.common.utils.RxUtil;
+import cn.edu.nini.bububu.common.utils.SnackbarUtil;
+import cn.edu.nini.bububu.component.OrmLite;
+import cn.edu.nini.bububu.component.RxBus;
+import cn.edu.nini.bububu.modules.main.adapter.MultiCityAdapter;
+import cn.edu.nini.bububu.modules.main.domain.CityORM;
+import cn.edu.nini.bububu.modules.main.domain.MultiUpdateEvent;
+import cn.edu.nini.bububu.modules.main.domain.Weather;
+import rx.Observable;
+import rx.functions.Action1;
+import rx.functions.Func0;
 
 import static cn.edu.nini.bububu.modules.main.ui.FirstFragment.TYPE_NOW_CARD;
 
@@ -29,7 +49,8 @@ public class MultiCityFragment extends BaseFragment {
     @BindView(R.id.linear_nocity)
     LinearLayout mLinearLayout;
     View mView;
-
+    private List<Weather> mWeathers;
+    private MultiCityAdapter mAdapter;
 
     public static Fragment newInstance(int type) {
         MultiCityFragment fragment = new MultiCityFragment();
@@ -46,8 +67,17 @@ public class MultiCityFragment extends BaseFragment {
             Bundle arguments = getArguments();
             TYPE = arguments.getInt("type");
         }
-        //initData();
+        RxBus.getInstance()
+                .toObservable(MultiUpdateEvent.class)
+                .subscribe(new SimpleSubscribe() {
+                    @Override
+                    public void onNext(Object o) {
+                        //multiLoad();
+                        PLog.d("接收到了消息MultiUpdate");
+                    }
+                });
     }
+
 
     @Nullable
     @Override
@@ -62,92 +92,54 @@ public class MultiCityFragment extends BaseFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+//        initView();
 
-        //load();
     }
 
-   /* private void load() {
-        mSwipeRefreshLayout.setRefreshing(true);
-        Observable.create(new Observable.OnSubscribe<String>() {
+    private void initView() {
+        mWeathers=new ArrayList<>();
+        mAdapter=new MultiCityAdapter(mWeathers);//mWeathers还没有解决
+        mRv.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRv.setAdapter(mAdapter);
+        mAdapter.setOnMultiCityLongClick(new MultiCityAdapter.onMultiCityLongClick() {
             @Override
-            public void call(Subscriber<? super String> subscriber) {
-                //在这里执行耗时操作
-                initData();
-                subscriber.onNext("");
-                subscriber.onCompleted();
+            public void longClick(String city) {
+                new AlertDialog.Builder(getActivity())
+                        .setMessage("你真的要删除这个城市么？")
+                        .setPositiveButton("删除", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                PLog.d("MultiCityFragment", "执行删除操作");
+                                SnackbarUtil.ShortSnackbar(getView(), "已经将城市删掉了 Ծ‸ Ծ",SnackbarUtil.Info).show();
+                            }
+                        }).show();
+            }
+        });
+    }
+
+    private void multiLoad() {
+        mWeathers.clear();
+        Observable.defer(new Func0<Observable<CityORM>>() {  //defer可以
+            @Override
+            public Observable<CityORM> call() {
+                return Observable.from(OrmLite.getLiteOrm().query(CityORM.class));
             }
         })
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
-                .subscribe(new Observer<String>() { //被订阅
+                .compose(RxUtil.rxSchedulerHelper())
+                .subscribe(new Action1<CityORM>() {
                     @Override
-                    public void onCompleted() {
-                        //处理主线程的逻辑
-                        initView();
-                        mSwipeRefreshLayout.setRefreshing(false);
-                        ToastUtil.showShort(getString(R.string.refresh_complete));
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.d("FirstFragment", "onError");
-                    }
-
-                    @Override
-                    public void onNext(String s) {
-                        //到这里mWeather已经是获取到了
-                        Log.d("FirstFragment", mWeather.getBasic().getCity());
-                        safeSetTitle(mWeather.getBasic().getCity());
+                    public void call(CityORM orm) {
+                        //因为需要先选择城市，再进行获取，所以要先处理choicecityActivity
                     }
                 });
+                /*.doOnRequest(aLong -> mSwipeRefreshLayout.setRefreshing(true))
+                .map(new Func1<CityORM, String>() {
+                    @Override
+                    public String call(CityORM orm) {
+                        return orm.getName();
+                    }
+                });*/
     }
-*/
-    /*private void initView() {
-        mSwipeRefreshLayout.setColorSchemeResources(android.R.color.holo_blue_bright,
-                android.R.color.holo_green_light,
-                android.R.color.holo_orange_light,
-                android.R.color.holo_red_light);
-        mSwipeRefreshLayout.setOnRefreshListener(
-               () -> mSwipeRefreshLayout.postDelayed(this::load, 1000));
-
-        mRv.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
-        mAdapter = new WeatherAdapter(mWeather);
-        mRv.setAdapter(mAdapter);
-    }
-
-    private void initData() {
-        PermissionGen.with(this).addRequestCode(REQUEST_PERMISSION)
-                .permissions(Manifest.permission.INTERNET).request();
-         FetchWeather();
-    }
-
-    private void FetchWeather() {
-        try {
-            URL url = new URL(C.target);
-            HttpURLConnection con = (HttpURLConnection) url.openConnection();
-            InputStream is = con.getInputStream();
-            BufferedReader br = new BufferedReader(new InputStreamReader(is));
-            mWeatherJson = new StringBuilder();
-            String input;
-            while ((input = br.readLine()) != null) {
-                mWeatherJson.append(input);
-            }
-            br.close();
-            is.close();
-
-            //处理json数据。
-            String weatherJson =  mWeatherJson.toString().toString().trim().
-                    subSequence(31,  mWeatherJson.toString().toString().trim().length() - 2).toString();
-
-            Gson gson = new Gson();
-            Weather weather = gson.fromJson(weatherJson, Weather.class);
-            mWeather = weather;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-    }*/
-
 
     /**
      * 加载数据操作,在视图创建之前初始化
@@ -156,4 +148,6 @@ public class MultiCityFragment extends BaseFragment {
     public void lazyLoad() {
 
     }
+
+
 }
