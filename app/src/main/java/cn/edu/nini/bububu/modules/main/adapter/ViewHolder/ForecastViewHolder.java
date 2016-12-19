@@ -1,4 +1,4 @@
-package cn.edu.nini.bububu.modules.main.adapter;
+package cn.edu.nini.bububu.modules.main.adapter.ViewHolder;
 
 import android.content.Context;
 import android.view.View;

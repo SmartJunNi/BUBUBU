@@ -24,15 +24,15 @@ public abstract class ToolbarActivity extends BaseActivity {
      */
     abstract protected int provideContentViewId();
 
-    public void onToolbarClick(){
+    protected void onToolbarClick(){
 
     }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        beforeSetContent();//自定义方法 可以让子类重写。
         setContentView(provideContentViewId());//子类提供的布局
-
         mAppBar = (AppBarLayout) findViewById(R.id.appbar_layout);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         if (mToolbar == null || mAppBar == null) {
@@ -56,7 +56,7 @@ public abstract class ToolbarActivity extends BaseActivity {
             }
         }
         if (Build.VERSION.SDK_INT >= 21) {  //actionbar  浮起
-            mAppBar.setElevation(10.6f);
+            mAppBar.setElevation(10f);
         }
     }
 
@@ -71,5 +71,9 @@ public abstract class ToolbarActivity extends BaseActivity {
 
     public Toolbar getToolbar(){
         return mToolbar;
+    }
+
+    protected void beforeSetContent() {
+
     }
 }

@@ -98,6 +98,10 @@ public class SharedPreferenceUtil {
         mPrefs.edit().putString(CITY_NAME, name).apply();
     }
 
+    /**
+     * //如果第一次进入那默认北京
+     * @return
+     */
     public String getCityName() {
         return mPrefs.getString(CITY_NAME, "北京");
     }

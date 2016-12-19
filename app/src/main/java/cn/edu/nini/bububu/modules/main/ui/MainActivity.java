@@ -22,14 +22,19 @@ import butterknife.ButterKnife;
 import cn.edu.nini.bububu.R;
 import cn.edu.nini.bububu.base.BaseActivity;
 import cn.edu.nini.bububu.base.C;
+import cn.edu.nini.bububu.base.SimpleSubscribe;
 import cn.edu.nini.bububu.common.utils.CircularAnimUtil;
+import cn.edu.nini.bububu.common.utils.RxDrawer;
+import cn.edu.nini.bububu.common.utils.RxUtil;
 import cn.edu.nini.bububu.common.utils.SharedPreferenceUtil;
 import cn.edu.nini.bububu.common.utils.SnackbarUtil;
 import cn.edu.nini.bububu.common.utils.ToastUtil;
 import cn.edu.nini.bububu.modules.city.ChoiceCityActivity;
 import cn.edu.nini.bububu.modules.main.adapter.MyViewPageAdapter;
+import cn.edu.nini.bububu.modules.setting.ui.SettingActivity;
+import rx.android.schedulers.AndroidSchedulers;
 
-public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener{
+public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener {
     @BindView(R.id.viewpage)
     ViewPager mViewPager;
     @BindView(R.id.fab)
@@ -53,68 +58,71 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         ButterKnife.bind(this);
         initView();
         initIcon();
+        initDrawer();
     }
 
     private void initView() {
         setSupportActionBar(mToolbar);
         MyViewPageAdapter adapter = new MyViewPageAdapter(getSupportFragmentManager());
         adapter.addFragment(FirstFragment.newInstance(1), "主页面");
-        adapter.addFragment(FirstFragment.newInstance(2), "多城市");
+        adapter.addFragment(MultiCityFragment.newInstance(2), "多城市");
         mViewPager.setAdapter(adapter);
         mTabLayout.setupWithViewPager(mViewPager);
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-                                               @Override
-                                               public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
-                                               }
+            }
 
-                                               @Override
-                                               public void onPageSelected(int position) {
-                                                   if (position == 1) {
-                                                       mFab.setImageResource(R.drawable.ic_add_24dp);
-                                                       mFab.setBackgroundTintList(
-                                                               ColorStateList.valueOf(ContextCompat.getColor(MainActivity.this, R.color.colorPrimary))
-                                                       );//设置背景色调
-                                                       mFab.setOnClickListener(new View.OnClickListener() {
-                                                           @Override
-                                                           public void onClick(View v) {
-                                                               Intent intent = new Intent(MainActivity.this, ChoiceCityActivity.class);
-                                                               intent.putExtra(C.MULTI_CHECK,true);
-                                                                //// TODO: 2016/12/15 传递参数到 ChoiceCityActivity
-                                                               CircularAnimUtil.startActivity(MainActivity.this,intent,mFab, R.color.colorPrimary);
-                                                           }
-                                                       });
-                                                       if (!mFab.isShown()) {
-                                                           mFab.show();
-                                                       }
-                                                   } else {
-                                                       mFab.setImageResource(R.drawable.ic_favorite);
-                                                       mFab.setBackgroundTintList(
-                                                               ColorStateList.valueOf(ContextCompat.getColor(MainActivity.this, R.color.colorAccent)));
+            @Override
+            public void onPageSelected(int position) {
 
-                                                       mFab.setOnClickListener(new View.OnClickListener() {
-                                                           @Override
-                                                           public void onClick(View v) {
-                                                               Snackbar snackBar = SnackbarUtil.ShortSnackbar(mCoordinatorLayout, "Hello~", SnackbarUtil.Info);
-                                                               snackBar.setAction("动作", (vi) -> ToastUtil.showShort("你好O(∩_∩)O~"))
-                                                                       .setCallback(new Snackbar.Callback() {
-                                                                           @Override
-                                                                           public void onDismissed(Snackbar snackbar, int event) {
-                                                                               super.onDismissed(snackbar, event);
-                                                                               ToastUtil.showShort("我消失了~");
-                                                                           }
-                                                                       }).show();
-                                                           }
-                                                       });
-                                                   }
-                                               }
+                if (position == 1) {
+                    mFab.setImageResource(R.drawable.ic_add_24dp);
+                    mFab.setBackgroundTintList(
+                            ColorStateList.valueOf(ContextCompat.getColor(MainActivity.this, R.color.colorPrimary))
+                    );//设置背景色调
+                    mFab.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(MainActivity.this, ChoiceCityActivity.class);
+                            intent.putExtra(C.MULTI_CHECK, true);
+                            //// TODO: 2016/12/15 传递参数到 ChoiceCityActivity
+                            CircularAnimUtil.startActivity(MainActivity.this, intent, mFab, R.color.colorPrimary);
+                        }
+                    });
+                    if (!mFab.isShown()) {
+                        mFab.show();
+                    }
+                } else {
+                    mFab.setImageResource(R.drawable.ic_favorite);
+                    mFab.setBackgroundTintList(
+                            ColorStateList.valueOf(ContextCompat.getColor(MainActivity.this, R.color.colorAccent)));
 
-                                               @Override
-                                               public void onPageScrollStateChanged(int state) {
-                                               }
-                                           });
+                    mFab.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Snackbar snackBar = SnackbarUtil.ShortSnackbar(mCoordinatorLayout, "Hello~", SnackbarUtil.Info);
+                            snackBar.setAction("动作", (vi) -> ToastUtil.showShort("你好O(∩_∩)O~"))
+                                    .setCallback(new Snackbar.Callback() {
+                                        @Override
+                                        public void onDismissed(Snackbar snackbar, int event) {
+                                            super.onDismissed(snackbar, event);
+                                            ToastUtil.showShort("我消失了~");
+                                        }
+                                    }).show();
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+            }
+        });
 
     }
+
     /**
      * 初始化抽屉
      */
@@ -124,6 +132,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             mNavView.setNavigationItemSelectedListener(this);
             //navigationView.setItemIconTintList(null);
             mNavView.inflateHeaderView(R.layout.nav_header_main);
+            //下面三步是添加actionbar按钮的关键
             ActionBarDrawerToggle toggle =
                     new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, R.string.navigation_drawer_open,
                             R.string.navigation_drawer_close);
@@ -131,10 +140,36 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             toggle.syncState();
         }
     }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        RxDrawer.close(mDrawerLayout)
+                .compose(RxUtil.rxSchedulerHelper(AndroidSchedulers.mainThread()))
+                .subscribe(new SimpleSubscribe() {
+                    @Override
+                    public void onNext(Object o) {
+                        switch (item.getItemId()) {
+                            case R.id.nav_city:
+                                ChoiceCityActivity.launch(MainActivity.this);
+                                break;
+                            case R.id.nav_multi_cities:
+                                mViewPager.setCurrentItem(1);
+                                break;
+                            case R.id.nav_set:
+                                SettingActivity.launch(MainActivity.this);
+                                break;
+                            case R.id.nav_about:
+                                mViewPager.setCurrentItem(1);
+                                break;
+                        }
+                    }
+                });
+        return true;
+    }
+
     /**
      * 初始化Icon
      */
-
     private void initIcon() {
         if (SharedPreferenceUtil.getInstance().getIconType() == 0) {
             SharedPreferenceUtil.getInstance().putInt("未知", R.mipmap.none);
@@ -168,8 +203,5 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         }
     }
 
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        return false;
-    }
+
 }

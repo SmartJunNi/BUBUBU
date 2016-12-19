@@ -1,6 +1,7 @@
 package cn.edu.nini.bububu.common.utils;
 
 import rx.Observable;
+import rx.Scheduler;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -19,6 +20,16 @@ public class RxUtil {
                         .observeOn(AndroidSchedulers.mainThread());
             }
         };
+    }
 
+    public static <T> Observable.Transformer<T,T> rxSchedulerHelper(Scheduler scheduler){
+        return new Observable.Transformer<T, T>() {
+            @Override
+            public Observable<T> call(Observable<T> observable) {
+                return observable.subscribeOn(scheduler)
+                        .unsubscribeOn(AndroidSchedulers.mainThread())
+                        .subscribeOn(AndroidSchedulers.mainThread());
+            }
+        };
     }
 }

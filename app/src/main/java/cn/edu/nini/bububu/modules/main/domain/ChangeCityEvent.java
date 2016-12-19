@@ -5,4 +5,6 @@ package cn.edu.nini.bububu.modules.main.domain;
  */
 public class ChangeCityEvent {
 
+    public ChangeCityEvent() {
+    }
 }

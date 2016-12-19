@@ -1,4 +1,4 @@
-package cn.edu.nini.bububu.modules.main.adapter;
+package cn.edu.nini.bububu.modules.main.adapter.ViewHolder;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;

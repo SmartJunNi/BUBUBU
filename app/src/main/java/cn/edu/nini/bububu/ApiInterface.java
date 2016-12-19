@@ -24,6 +24,6 @@ public interface ApiInterface {
     Observable<WeatherAPI> mWeather3(@Query("cityid") String cityId,
                                      @Query("key") String key);
     @GET("weather")
-    Observable<WeatherAPI> mWeather4(@Query("city") String cityId,
+    Observable<WeatherAPI> mWeather4(@Query("city") String city,
                                      @Query("key") String key);
 }

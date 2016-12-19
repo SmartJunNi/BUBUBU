@@ -6,6 +6,10 @@ import android.view.ViewGroup;
 import cn.edu.nini.bububu.R;
 import cn.edu.nini.bububu.base.BaseViewHolder;
 import cn.edu.nini.bububu.component.AnimRecyclerViewAdapter;
+import cn.edu.nini.bububu.modules.main.adapter.ViewHolder.ForecastViewHolder;
+import cn.edu.nini.bububu.modules.main.adapter.ViewHolder.HourViewHolder;
+import cn.edu.nini.bububu.modules.main.adapter.ViewHolder.SuggestViewHolder;
+import cn.edu.nini.bububu.modules.main.adapter.ViewHolder.TemperatureViewHolder;
 import cn.edu.nini.bububu.modules.main.domain.Weather;
 
 /**

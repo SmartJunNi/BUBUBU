@@ -4,7 +4,10 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="refresh_complete">加载完毕，✺◟(∗❛ัᴗ❛ั∗)◞✺~</string>
 
-
+<string-array name="icons">
+    <item>图标一</item>
+    <item>图标二</item>
+</string-array>
 
     <string name="chage_icon">更换图标</string>
     <string name="nav_city">选择城市</string>

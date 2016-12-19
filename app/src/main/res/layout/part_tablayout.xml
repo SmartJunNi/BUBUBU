@@ -6,24 +6,25 @@
                                             android:layout_height="wrap_content"
                                             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
     >
-<!--加了这个  settitle会不管用的-->
-  <!--  <android.support.design.widget.CollapsingToolbarLayout
-        android:id="@+id/toolbar_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fitsSystemWindows="true"
-        app:contentScrim="?attr/colorPrimary"
-        app:layout_scrollFlags="scroll|enterAlways|snap">-->
+    <!--加了这个  settitle会不管用的-->
+    <!--  <android.support.design.widget.CollapsingToolbarLayout
+          android:id="@+id/toolbar_layout"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:fitsSystemWindows="true"
+          app:contentScrim="?attr/colorPrimary"
+          app:layout_scrollFlags="scroll|enterAlways|snap">-->
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-            app:tabIndicatorColor="@android:color/white"
-            app:tabIndicatorHeight="4dp"/>
-<!--    </android.support.design.widget.CollapsingToolbarLayout>-->
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:tabIndicatorColor="@android:color/white"
+        app:layout_scrollFlags="scroll|enterAlways"
+        app:tabIndicatorHeight="4dp"/>
+    <!--    </android.support.design.widget.CollapsingToolbarLayout>-->
 
     <android.support.design.widget.TabLayout
         android:id="@+id/tabLayout"

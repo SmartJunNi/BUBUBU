@@ -17,25 +17,18 @@ import org.mym.plog.PLog;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.edu.nini.bububu.R;
-import cn.edu.nini.bububu.ApiInterface;
 import cn.edu.nini.bububu.base.BaseFragment;
-import cn.edu.nini.bububu.base.C;
 import cn.edu.nini.bububu.base.SimpleSubscribe;
-import cn.edu.nini.bububu.common.utils.RxUtil;
 import cn.edu.nini.bububu.common.utils.SharedPreferenceUtil;
 import cn.edu.nini.bububu.common.utils.ToastUtil;
+import cn.edu.nini.bububu.component.RetrofitSingleton;
 import cn.edu.nini.bububu.component.RxBus;
 import cn.edu.nini.bububu.modules.main.adapter.WeatherAdapter;
 import cn.edu.nini.bububu.modules.main.domain.ChangeCityEvent;
 import cn.edu.nini.bububu.modules.main.domain.Weather;
-import cn.edu.nini.bububu.modules.main.domain.WeatherAPI;
-import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
-import retrofit2.converter.gson.GsonConverterFactory;
 import rx.Observable;
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Func1;
 
 /**
  * Created by nini on 2016/12/11.
@@ -155,6 +148,7 @@ public class FirstFragment extends BaseFragment {
                     public void onError(Throwable e) {
                         PLog.d("onError"+e.toString());
                         e.printStackTrace();
+                        RetrofitSingleton.disposeFailureInfo(e);
                     }
 
                     @Override
@@ -174,13 +168,13 @@ public class FirstFragment extends BaseFragment {
     }
 
     private Observable<Weather> retrofit() {
-        Retrofit retrofit = new Retrofit.Builder()
+        /*Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(C.baseUrl)
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .build();
         ApiInterface service = retrofit.create(ApiInterface.class);
-        Observable<WeatherAPI> observable = service.mWeather3("CN101010100", "5f6b4bebfc98499db06709192bcd7283");
+        Observable<WeatherAPI> observable = service.mWeather4("嘉兴", "5f6b4bebfc98499db06709192bcd7283");
         return observable
                 .map(new Func1<WeatherAPI, Weather>() {  //将WeatherAPI里的List集合map成weather
                     @Override
@@ -188,10 +182,17 @@ public class FirstFragment extends BaseFragment {
                         return api.mHeWeatherDataService30s.get(0);
                     }
                 })
-                .compose(RxUtil.rxSchedulerHelper());
+                .compose(RxUtil.rxSchedulerHelper());*/
+        String city=SharedPreferenceUtil.getInstance().getCityName();
+        return RetrofitSingleton.getInstance()
+                .fetchWeather(city)
+                .compose(this.bindToLifecycle());
     }
 
-
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+    }
 
     @Override
     public void lazyLoad() {

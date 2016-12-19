@@ -1,5 +1,6 @@
 package cn.edu.nini.bububu.modules.city;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -22,6 +23,7 @@ import cn.edu.nini.bububu.R;
 import cn.edu.nini.bububu.base.C;
 import cn.edu.nini.bububu.base.SimpleSubscribe;
 import cn.edu.nini.bububu.base.ToolbarActivity;
+import cn.edu.nini.bububu.base.Utils;
 import cn.edu.nini.bububu.common.utils.RxUtil;
 import cn.edu.nini.bububu.common.utils.SharedPreferenceUtil;
 import cn.edu.nini.bububu.component.OrmLite;
@@ -35,6 +37,7 @@ import cn.edu.nini.bububu.modules.main.domain.ChangeCityEvent;
 import cn.edu.nini.bububu.modules.main.domain.CityORM;
 import cn.edu.nini.bububu.modules.main.domain.MultiUpdateEvent;
 import rx.Observable;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by nini on 2016/12/14.
@@ -99,13 +102,13 @@ public class ChoiceCityActivity extends ToolbarActivity {
             if (currentLevel == LEVEL_PROVINCE) { //判断当前是省份还是城市
                 selectedProvince = mProList.get(position);//取到选择的城市信息
                 mRecyclerview.smoothScrollToPosition(0);
-                Log.d("ChoiceCityActivity", "点击 了item");
                 queryCities();
             } else if (currentLevel == LEVEL_CITY) {
-                String city = mCityList.get(position).CityName;
+                String city = Utils.replaceCity(mCityList.get(position).CityName);
+                Log.d("ChoiceCityActivity", "当前选中城市为："+city);
                 if(isChecked){
                     PLog.d("是多城市管理模式");
-                    OrmLite.getLiteOrm().save(new CityORM(city));  //// TODO: 2016/12/17  保存这个城市到数据库
+                    OrmLite.getInstance().save(new CityORM(city));  //// TODO: 2016/12/17  保存这个城市到数据库
                     RxBus.getInstance().post(new MultiUpdateEvent());  //向MultiCityFragment发送一个消息
                 }else{
                     SharedPreferenceUtil.getInstance().setCityName(city);
@@ -158,6 +161,7 @@ public class ChoiceCityActivity extends ToolbarActivity {
                 .toList()
                 .compose(RxUtil.rxSchedulerHelper())
                 .compose(this.bindToLifecycle())
+                .subscribeOn(Schedulers.io())
                 .doOnTerminate(() -> mProgressBar.setVisibility(View.GONE))
                 .subscribe(new SimpleSubscribe<List<String>>() {
                     @Override
@@ -235,5 +239,23 @@ public class ChoiceCityActivity extends ToolbarActivity {
                 SharedPreferenceUtil.getInstance().putBoolean("Tips", false);
             }
         }).show();
+    }
+
+    /**
+     * 这里return true之后   就可以显示向右的箭头了
+     * @return
+     */
+    @Override
+    public boolean canBack() {
+        return true;
+    }
+
+    @Override
+    protected void beforeSetContent() {
+        super.beforeSetContent();
+    }
+
+    public  static  void launch(Context context){
+        context.startActivity(new Intent(context,ChoiceCityActivity.class));
     }
 }

@@ -39,7 +39,7 @@ public class CardCityUIHelper {
         sMap.put(new WeatherInfo(CLOUDY_CODE, Other), R.mipmap.city_other_cloudy);
     }
 
-    void applyStatus(int code, String city, View view) {
+    public void applyStatus(int code, String city, View view) {
         if (code >= 300 && code < 408) {
             code = RAINY_CODE;
         } else if (code > 100 && code < 300) {
@@ -56,8 +56,11 @@ public class CardCityUIHelper {
         }
     }
 
+    /**
+     * 天气信息
+     */
     private static class WeatherInfo {
-        int weatherCode;
+        int weatherCode;// 空气质量
         String city;
 
         public WeatherInfo(int weatherCode, String city) {

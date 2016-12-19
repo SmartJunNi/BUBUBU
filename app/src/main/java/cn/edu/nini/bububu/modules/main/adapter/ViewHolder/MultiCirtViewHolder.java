@@ -1,4 +1,4 @@
-package cn.edu.nini.bububu.modules.main.adapter;
+package cn.edu.nini.bububu.modules.main.adapter.ViewHolder;
 
 import android.graphics.Color;
 import android.support.v7.widget.CardView;
@@ -13,6 +13,7 @@ import cn.edu.nini.bububu.R;
 import cn.edu.nini.bububu.base.BaseViewHolder;
 import cn.edu.nini.bububu.base.Utils;
 import cn.edu.nini.bububu.common.utils.SharedPreferenceUtil;
+import cn.edu.nini.bububu.modules.main.adapter.CardCityUIHelper;
 import cn.edu.nini.bububu.modules.main.domain.Weather;
 
 /**
@@ -35,7 +36,7 @@ public class MultiCirtViewHolder extends BaseViewHolder<Weather> {
     }
 
     @Override
-    protected void bind(Weather weather) {
+    public void bind(Weather weather) {
         //设置城市和温度
         try {
             mDialogCity.setText(Utils.safeText(weather.getBasic().getCity()));
@@ -47,6 +48,13 @@ public class MultiCirtViewHolder extends BaseViewHolder<Weather> {
                 SharedPreferenceUtil.getInstance().getInt(weather.getNow().getCond().getTxt(),R.mipmap.none));
         mDialogIcon.setColorFilter(Color.WHITE);// ?
 
+        //获取空气质量指数
+        int code = Integer.valueOf(weather.getNow().getCond().getCode());
+        CardCityUIHelper cardCityUIHelper = new CardCityUIHelper();
+        cardCityUIHelper.applyStatus(code, weather.getBasic().getCity(),mCardView);
+
+
+        PLog.d(weather.getBasic().getCity()+weather.getNow().getTmp());
         PLog.d(weather.getNow().getCond().getTxt() + " " + weather.getNow().getCond().getCode());
     }
 }

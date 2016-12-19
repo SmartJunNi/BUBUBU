@@ -5,9 +5,12 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
+import org.mym.plog.PLog;
+
 import java.util.List;
 
 import cn.edu.nini.bububu.R;
+import cn.edu.nini.bububu.modules.main.adapter.ViewHolder.MultiCirtViewHolder;
 import cn.edu.nini.bububu.modules.main.domain.Weather;
 
 /**
@@ -37,6 +40,13 @@ private List<Weather> mWeatherList;
     @Override
     public void onBindViewHolder(MultiCirtViewHolder holder, int position) {
         holder.bind(mWeatherList.get(position));
+        holder.itemView.setOnLongClickListener(v->{
+            //这边要提供城市的名字
+            this.mOnMultiCityLongClick.longClick(mWeatherList.get(holder.getAdapterPosition()).getBasic().getCity());
+            PLog.d(position+"       position");
+            PLog.d(holder.getAdapterPosition()+"        getAdapterPosition");
+            return true;
+        });
     }
 
 
@@ -45,6 +55,10 @@ private List<Weather> mWeatherList;
         return mWeatherList.size();
     }
 
+    /**
+     * 自定义对外方法，即城市数量是否为0
+     * @return
+     */
     public boolean isEmpty(){
         return 0==mWeatherList.size();
     }
