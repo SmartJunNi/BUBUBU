@@ -3,7 +3,8 @@ package cn.edu.nini.bububu.common.utils;
 import android.content.res.Resources;
 import android.support.annotation.DimenRes;
 
-import com.xiecc.seeWeather.base.BaseApplication;
+import cn.edu.nini.bububu.base.BaseApplication;
+
 
 public class DensityUtil {
 

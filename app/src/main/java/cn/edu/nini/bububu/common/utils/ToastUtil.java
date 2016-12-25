@@ -10,6 +10,7 @@ import cn.edu.nini.bububu.base.BaseApplication;
 
 
 /**
+ * 收藏
  * Created by nini on 2016/12/14.
  */
 

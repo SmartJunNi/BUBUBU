@@ -3,6 +3,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'me.tatarka.retrolambda'
 /*freeline*/
 apply plugin: 'com.antfortune.freeline'
+/*butterknife*/
 apply plugin: 'com.jakewharton.butterknife'
 
 
@@ -14,8 +15,8 @@ android {
         applicationId "cn.edu.nini.bububu"
         minSdkVersion 17
         targetSdkVersion 24
-        versionCode 1
-        versionName "1.0"
+        versionCode 1   /*是给程序看的  int类型 递增*/
+        versionName "1.0"   /*给人看的，代表版本*/
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

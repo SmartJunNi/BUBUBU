@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import org.mym.plog.PLog;
@@ -72,7 +73,7 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
                         mSharedPreferenceUtil.getAutoUpdate() + "小时更新"
         );
         //设置缓存
-        mClearCache.setSummary(FileSizeUtil.getAutoFileOrFilesSize(BaseApplication.getAppCacheDir()));
+        mClearCache.setSummary(FileSizeUtil.getAutoFileOrFolderSize(BaseApplication.getAppCacheDir()));
         PLog.d("系统缓存路径" + BaseApplication.getAppCacheDir());
 
         mChangeIcons.setOnPreferenceClickListener(this);
@@ -89,13 +90,61 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
         }
         if (mChangeUpdate == preference) {
             //// TODO: 2016/12/18 自动更新
+            showUpdateDialog();
         }
         if (mClearCache == preference) {
-        
+            SnackbarUtil.LongSnackbar(getView(),"缓存已清除",SnackbarUtil.Info).show();
         }
         return true;
     }
 
+    /**
+     * 选择更新间隔的对话框
+     */
+    private void showUpdateDialog() {
+        //网对话框中放入我们自定义的layout
+        LinearLayout layoutRoot = (LinearLayout) getActivity().findViewById(R.id.ll_root);
+        View dialog = LayoutInflater.from(getActivity()).inflate(R.layout.update_dialog, layoutRoot, false);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setView(dialog);
+        AlertDialog alertDialog = builder.show();
+
+        SeekBar seekbar = (SeekBar) dialog.findViewById(R.id.seekbar);
+        TextView tv_hour = (TextView) dialog.findViewById(R.id.tv_hour);
+        TextView tv_ok = (TextView) dialog.findViewById(R.id.tv_ok);
+        seekbar.setMax(24);
+        seekbar.setProgress(mSharedPreferenceUtil.getAutoUpdate());
+        tv_hour.setText("每" + mSharedPreferenceUtil.getAutoUpdate() + "小时刷新");
+        seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                tv_hour.setText("每" + progress + "小时刷新");
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
+        tv_ok.setOnClickListener((v)->{
+            mSharedPreferenceUtil.setAutoUpdate(seekbar.getProgress());
+            mChangeUpdate.setSummary(
+                    mSharedPreferenceUtil.getAutoUpdate() == 0 ? "禁止刷新" : "每" +
+                            mSharedPreferenceUtil.getAutoUpdate() + "小时更新");
+            alertDialog.dismiss();
+        });
+
+    }
+
+    /**
+     * 选择天气图标的对话框
+     */
     private void showIconDialog() {
         //创建自定义的AlertDialog
         LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -147,10 +196,10 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
                             [SharedPreferenceUtil.getInstance().getIconType()]);
             alertDialog.dismiss();
 
-            SnackbarUtil.IndefiniteSnackbar(getView(),"切换成功，重启应用生效",
-                    Snackbar.LENGTH_INDEFINITE, Color.YELLOW,getResources().getColor(R.color.sunnyDark)).setAction("重启",v1->{
-                    //如何重启呢
-                Intent intent=new Intent(getActivity(), MainActivity.class);
+            SnackbarUtil.IndefiniteSnackbar(getView(), "切换成功，重启应用生效",
+                    Snackbar.LENGTH_INDEFINITE, Color.YELLOW, getResources().getColor(R.color.sunnyDark)).setAction("重启", v1 -> {
+                //如何重启呢
+                Intent intent = new Intent(getActivity(), MainActivity.class);
                 intent.setFlags(intent.FLAG_ACTIVITY_CLEAR_TOP);
                 getActivity().startActivity(intent);
                 getActivity().finish();

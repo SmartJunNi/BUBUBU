@@ -14,4 +14,5 @@
     <string name="setting">设置</string>
     <string name="about">关于</string>
     <string name="multi_cities">多城市管理</string>
+    <string name="can_not_found_version_name">找不到版本号</string>
 </resources>

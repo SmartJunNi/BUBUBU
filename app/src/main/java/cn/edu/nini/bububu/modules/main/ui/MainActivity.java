@@ -99,20 +99,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                     mFab.setBackgroundTintList(
                             ColorStateList.valueOf(ContextCompat.getColor(MainActivity.this, R.color.colorAccent)));
 
-                    mFab.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Snackbar snackBar = SnackbarUtil.ShortSnackbar(mCoordinatorLayout, "Hello~", SnackbarUtil.Info);
-                            snackBar.setAction("动作", (vi) -> ToastUtil.showShort("你好O(∩_∩)O~"))
-                                    .setCallback(new Snackbar.Callback() {
-                                        @Override
-                                        public void onDismissed(Snackbar snackbar, int event) {
-                                            super.onDismissed(snackbar, event);
-                                            ToastUtil.showShort("我消失了~");
-                                        }
-                                    }).show();
-                        }
-                    });
+                    mFab.setOnClickListener((v)->showSnackBar());
                 }
             }
 
@@ -120,9 +107,21 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             public void onPageScrollStateChanged(int state) {
             }
         });
-
+        mFab.setOnClickListener(v->showSnackBar());
     }
 
+
+    private   void showSnackBar(){
+        Snackbar snackBar = SnackbarUtil.ShortSnackbar(mCoordinatorLayout, "Hello~", SnackbarUtil.Info);
+        snackBar.setAction("动作", (vi) -> ToastUtil.showShort("你好O(∩_∩)O~"))
+                .setCallback(new Snackbar.Callback() {
+                    @Override
+                    public void onDismissed(Snackbar snackbar, int event) {
+                        super.onDismissed(snackbar, event);
+                        ToastUtil.showShort("我消失了~");
+                    }
+                }).show();
+    }
     /**
      * 初始化抽屉
      */

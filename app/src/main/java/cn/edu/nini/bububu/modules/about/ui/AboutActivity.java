@@ -12,6 +12,7 @@ import cn.edu.nini.bububu.base.BaseActivity;
 
 public class AboutActivity extends BaseActivity {
 
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
