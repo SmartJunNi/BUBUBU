@@ -89,11 +89,10 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
             showIconDialog();
         }
         if (mChangeUpdate == preference) {
-            //// TODO: 2016/12/18 自动更新
             showUpdateDialog();
         }
         if (mClearCache == preference) {
-            SnackbarUtil.LongSnackbar(getView(),"缓存已清除",SnackbarUtil.Info).show();
+            SnackbarUtil.LongSnackbar(getView(), "缓存已清除", SnackbarUtil.Info).show();
         }
         return true;
     }
@@ -132,7 +131,7 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
             }
         });
 
-        tv_ok.setOnClickListener((v)->{
+        tv_ok.setOnClickListener((v) -> {
             mSharedPreferenceUtil.setAutoUpdate(seekbar.getProgress());
             mChangeUpdate.setSummary(
                     mSharedPreferenceUtil.getAutoUpdate() == 0 ? "禁止刷新" : "每" +
@@ -212,10 +211,12 @@ public class SettingFragment extends PreferenceFragment implements Preference.On
     @Override
     public boolean onPreferenceChange(Preference preference, Object newValue) {
         if (preference == mAnimationOnOff) {
+            mSharedPreferenceUtil.setMainAnim(((boolean) newValue) );
 
         }
         if (preference == mNotificationType) {
-
+            mSharedPreferenceUtil.setNotificationModel(((boolean) newValue)
+                    ? Notification.FLAG_ONGOING_EVENT : Notification.FLAG_AUTO_CANCEL);
         }
         return true;
     }

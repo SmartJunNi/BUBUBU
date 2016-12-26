@@ -5,6 +5,7 @@ import android.view.ViewGroup;
 
 import cn.edu.nini.bububu.R;
 import cn.edu.nini.bububu.base.BaseViewHolder;
+import cn.edu.nini.bububu.common.utils.SharedPreferenceUtil;
 import cn.edu.nini.bububu.component.AnimRecyclerViewAdapter;
 import cn.edu.nini.bububu.modules.main.adapter.ViewHolder.ForecastViewHolder;
 import cn.edu.nini.bububu.modules.main.adapter.ViewHolder.HourViewHolder;
@@ -87,7 +88,9 @@ public class WeatherAdapter extends AnimRecyclerViewAdapter<BaseViewHolder> {
                 ((ForecastViewHolder) holder).bind(mWeather);
                 break;
         }
-        showItemAnim(holder.itemView, position);
+        if(SharedPreferenceUtil.getInstance().getMainAnim()) {
+            showItemAnim(holder.itemView, position);
+        }
     }
 
 

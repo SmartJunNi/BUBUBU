@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/coord"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="256dp"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+        <!--【注】：使用CollapsingToolbarLayout时必须把title设置到CollapsingToolbarLayout上，
+        设置到Toolbar上不会显示。-->
+        <android.support.design.widget.CollapsingToolbarLayout
+            android:id="@+id/collapsing_toolbar_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:collapsedTitleGravity="start"
+            app:contentScrim="?attr/colorPrimary"
+           app:expandedTitleGravity="bottom|center_horizontal"
+            app:expandedTitleTextAppearance="@style/textToolbarTitle"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
+            <!-- contentScrim 这个属性是设置折叠后Toolbar的颜色-->
+            <!--注意想要contentScrim这个有效果，除了toolbar还有有其他的控件-->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:scaleType="centerCrop"
+                    android:src="@mipmap/sun_main"
+                    app:layout_collapseMode="parallax"
+                    app:layout_collapseParallaxMultiplier="0.7"/>
+
+                <TextView
+                    android:id="@+id/tv_version"
+                    style="@style/textToolbarContent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerInParent="true"
+                    android:layout_marginBottom="8dp"
+                    android:text="版本信息"/>
+            </RelativeLayout>
+
+            <android.support.v7.widget.Toolbar
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:layout_collapseMode="pin"
+                android:id="@+id/toolbar"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+            <!--app:popupTheme，这个属性就是用来自定义我们弹出的菜单的样式，
+            在之前的Actionbar的溢出菜单，我们是不能自定义他的样式的，
+            只能根据你的theme来选择黑白两种，不能自己定义，现在我们可以定义弹出菜单的样式-->
+        </android.support.design.widget.CollapsingToolbarLayout>
+    </android.support.design.widget.AppBarLayout>
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <include layout="@layout/part_about"/>
+
+            <include layout="@layout/part_about"/>
+
+            <include layout="@layout/part_about"/>
+
+            <include layout="@layout/part_about"/>
+
+            <include layout="@layout/part_about"/>
+
+            <include layout="@layout/part_about"/>
+
+            <include layout="@layout/part_about"/>
+
+            <include layout="@layout/part_about"/>
+        </LinearLayout>
+
+    </android.support.v4.widget.NestedScrollView>
+</android.support.design.widget.CoordinatorLayout>

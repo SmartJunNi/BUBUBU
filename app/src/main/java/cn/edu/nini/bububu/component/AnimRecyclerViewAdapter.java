@@ -6,6 +6,8 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
+import cn.edu.nini.bububu.R;
+
 /**
  * Created by nini on 2016/12/17.
  */
@@ -15,7 +17,7 @@ public class AnimRecyclerViewAdapter<T extends RecyclerView.ViewHolder>
 
     public static final int Delay = 138;
     private int mLastPosition = -1;
-    private int mAnim= android.R.anim.slide_in_left;
+    private int mAnim= R.anim.slide_in_bottom;
 
     @Override
     public T onCreateViewHolder(ViewGroup parent, int viewType) {

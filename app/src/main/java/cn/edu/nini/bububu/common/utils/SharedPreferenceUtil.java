@@ -106,15 +106,14 @@ public class SharedPreferenceUtil {
         return mPrefs.getString(CITY_NAME, "北京");
     }
 
-    //  通知栏模式 默认为常驻
-    public void setNotificationModel(int t) {
-        mPrefs.edit().putInt(NOTIFICATION_MODEL, t).apply();
+
+    public void setNotificationModel(int model){
+        mPrefs.edit().putInt(NOTIFICATION_MODEL,model).apply();
     }
 
-    public int getNotificationModel() {
+    public int getNotificationModel(){
         return mPrefs.getInt(NOTIFICATION_MODEL, Notification.FLAG_ONGOING_EVENT);
     }
-
     // 首页 Item 动画效果 默认关闭
 
     public void setMainAnim(boolean b) {

@@ -19,6 +19,10 @@
 
         <activity android:name=".modules.city.ChoiceCityActivity"/>
         <activity android:name=".modules.setting.ui.SettingActivity"/>
+        <activity android:name=".modules.about.ui.AboutActivity"/>
+
+        <!--通知栏服务-->
+        <service android:name=".modules.service.AutoUpdateService"/>
     </application>
 
 </manifest>

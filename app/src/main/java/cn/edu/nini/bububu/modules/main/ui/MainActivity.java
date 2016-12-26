@@ -29,8 +29,10 @@ import cn.edu.nini.bububu.common.utils.RxUtil;
 import cn.edu.nini.bububu.common.utils.SharedPreferenceUtil;
 import cn.edu.nini.bububu.common.utils.SnackbarUtil;
 import cn.edu.nini.bububu.common.utils.ToastUtil;
+import cn.edu.nini.bububu.modules.about.ui.AboutActivity;
 import cn.edu.nini.bububu.modules.city.ChoiceCityActivity;
 import cn.edu.nini.bububu.modules.main.adapter.MyViewPageAdapter;
+import cn.edu.nini.bububu.modules.service.AutoUpdateService;
 import cn.edu.nini.bububu.modules.setting.ui.SettingActivity;
 import rx.android.schedulers.AndroidSchedulers;
 
@@ -49,7 +51,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     NavigationView mNavView;
     @BindView(R.id.drawlayout)
     DrawerLayout mDrawerLayout;
-
+private  SharedPreferenceUtil mSharedPreferenceUtil=SharedPreferenceUtil.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +61,8 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         initView();
         initIcon();
         initDrawer();
+        //启动就开启服务
+        startService(new Intent(MainActivity.this, AutoUpdateService.class));
     }
 
     private void initView() {
@@ -158,7 +162,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                                 SettingActivity.launch(MainActivity.this);
                                 break;
                             case R.id.nav_about:
-                                mViewPager.setCurrentItem(1);
+                                AboutActivity.launch(MainActivity.this);
                                 break;
                         }
                     }

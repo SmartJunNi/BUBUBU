@@ -1,11 +1,17 @@
 package cn.edu.nini.bububu.modules.main.ui;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,6 +36,8 @@ import rx.Observable;
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
 
+import static cn.edu.nini.bububu.modules.service.AutoUpdateService.AUTO_UPDATA_SERVICE;
+
 /**
  * Created by nini on 2016/12/11.
  */
@@ -51,6 +59,7 @@ public class FirstFragment extends BaseFragment {
     private View mView;
     private static Weather mWeather = new Weather();//这里用了静态
     private WeatherAdapter mAdapter;
+    private SharedPreferenceUtil mSharedPreferenceUtil = SharedPreferenceUtil.getInstance();
 
 
     public static Fragment newInstance(int type) {
@@ -101,6 +110,7 @@ public class FirstFragment extends BaseFragment {
         super.onViewCreated(view, savedInstanceState);
         initView();
         load(); //// TODO: 2016/12/16 toolbar标题不显示  y因为把toolbar包裹在了CollapsingToolbarLayout里面
+
     }
 
 
@@ -146,7 +156,7 @@ public class FirstFragment extends BaseFragment {
 
                     @Override
                     public void onError(Throwable e) {
-                        PLog.d("onError"+e.toString());
+                        PLog.d("onError" + e.toString());
                         e.printStackTrace();
                         RetrofitSingleton.disposeFailureInfo(e);
                     }
@@ -162,12 +172,19 @@ public class FirstFragment extends BaseFragment {
                         mWeather.setSuggestion(weather.getSuggestion());
                         safeSetTitle(mWeather.getBasic().getCity());
                         mAdapter.notifyDataSetChanged();
-                        PLog.d("onNext");
+                        PLog.d("onNext：查询到了weather");
+                        Log.d("FirstFragment", "mSharedPreferenceUtil.getNotificationModel():" + mSharedPreferenceUtil.getNotificationModel());
+                        if (mSharedPreferenceUtil.getNotificationModel() == Notification.FLAG_ONGOING_EVENT) {
+                            nomalStyleNotification(weather);
+                        }
                     }
                 });
     }
 
     private Observable<Weather> retrofit() {
+        /*
+        以下代码移动到RetrofitSingle里去了
+         */
         /*Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(C.baseUrl)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -183,7 +200,7 @@ public class FirstFragment extends BaseFragment {
                     }
                 })
                 .compose(RxUtil.rxSchedulerHelper());*/
-        String city=SharedPreferenceUtil.getInstance().getCityName();
+        String city = SharedPreferenceUtil.getInstance().getCityName();
         return RetrofitSingleton.getInstance()
                 .fetchWeather(city)
                 .compose(this.bindToLifecycle());
@@ -198,4 +215,23 @@ public class FirstFragment extends BaseFragment {
     public void lazyLoad() {
 
     }
+
+    private void nomalStyleNotification(Weather weather) {
+        Intent intent = new Intent(getActivity(), MainActivity.class);
+
+        PendingIntent pi = PendingIntent.getActivity(getActivity(),
+                AUTO_UPDATA_SERVICE, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        Notification.Builder builder = new Notification.Builder(getActivity());
+        Notification notification = builder.setContentIntent(pi)
+                .setContentTitle(weather.getBasic().getCity())
+                .setContentText(weather.getNow().getCond().getTxt() + "  当前温度：" + weather.getNow().getTmp() + "℃")
+                .setSmallIcon(mSharedPreferenceUtil.getInt(weather.getNow().getCond().getTxt(), R.mipmap.none))
+                .build();
+        notification.flags = mSharedPreferenceUtil.getNotificationModel();
+        Log.d("FirstFragment", "mSharedPreferenceUtil.getNotificationModel():" + mSharedPreferenceUtil.getNotificationModel());
+        //有了通知以后 要有管理者
+        NotificationManager manager = (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
+        manager.notify(1, notification);
+    }
+
 }
