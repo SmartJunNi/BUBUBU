@@ -1,0 +1,45 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+
+buildscript {
+    repositories {
+        jcenter()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:2.2.2'
+        /*lambda*/
+        classpath 'me.tatarka:gradle-retrolambda:3.2.0'
+        /*freeline*/
+        classpath 'com.antfortune.freeline:gradle:0.8.2'
+        /*butterknife*/
+        classpath 'com.jakewharton:butterknife-gradle-plugin:8.4.0'
+
+
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
+}
+
+allprojects {
+    repositories {
+        jcenter()
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
+//打包任务
+task makejar(type:org.gradle.api.tasks.bundling.Jar) {
+    //指定生成的jar名
+    baseName 'MyUtil'
+    //从哪里打包class文件
+    from('app/build/intermediates/classes/debug/cn/edu/nini/bububu/common/utils')
+    //打包到jar后的目录结构
+    into('cn/nini/MyUtil/')
+    //去掉不需要打包的目录和文件
+    exclude('BuildConfig.class', 'R.class')
+    //去掉R$开头的文件
+    exclude{ it.name.startsWith('R$');}
+}
+

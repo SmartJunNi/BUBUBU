@@ -1,6 +1,7 @@
 package cn.edu.nini.bububu.modules.city.adapter;
 
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,5 +54,7 @@ public class CityAdapter extends AnimRecyclerViewAdapter<CityViewHolder> {
 
     public void setOnItemClickListener(OnRecyclerViewOnClickListener listener){
         mRecyclerViewOnClickListener=listener;
+        SQLiteDatabase db=SQLiteDatabase.create(null);
+
     }
 }

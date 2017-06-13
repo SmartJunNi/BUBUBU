@@ -59,9 +59,9 @@ public class RetrofitSingleton { //// TODO: 2016/12/17   根据城市名来查�
 
     private static void initRetrofit() {
         sRetrofit = new Retrofit.Builder()
-                .baseUrl(C.baseUrl)
-                .addConverterFactory(GsonConverterFactory.create())
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .baseUrl(C.baseUrl)//添加webService的URI地址
+                .addConverterFactory(GsonConverterFactory.create())  //使用什么转换Json字符串
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())  //
                 .build();
     }
 

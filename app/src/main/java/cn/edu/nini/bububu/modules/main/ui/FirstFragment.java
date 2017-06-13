@@ -128,6 +128,7 @@ public class FirstFragment extends BaseFragment {
     }
 
     private void load() {
+
         retrofit()
                 .doOnRequest(aLong -> mSwipeRefreshLayout.setRefreshing(true))
                 .doOnError(throwable -> {

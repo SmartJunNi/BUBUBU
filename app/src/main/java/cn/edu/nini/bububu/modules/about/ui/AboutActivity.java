@@ -39,6 +39,7 @@ public class AboutActivity extends BaseActivity {
         setContentView(R.layout.activity_about);
         ButterKnife.bind(this);
         StatusBarUtil.setImmersiveStatusBar(this);
+        StatusBarUtil.setImmersiveStatusBarToolbar(mToolbar,this);
 
         DisplayMetrics metrics=new DisplayMetrics();
         Log.d("AboutActivity", metrics.toString());

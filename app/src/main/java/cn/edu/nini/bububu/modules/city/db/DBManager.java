@@ -79,7 +79,6 @@ public class DBManager {
             PLog.e("IOException");
             e.printStackTrace();
         }
-
         return null;
     }
 
